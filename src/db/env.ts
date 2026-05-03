@@ -9,9 +9,6 @@ const envSchema = z.object({
   TOKEN_SECRET: z.string().min(1),
 
   TOKEN_EXPIRY: z.string().min(1),
-
-  REDIS_HOST: z.string().min(1),
-  REDIS_PORT: z.coerce.number(), // converts string → number
 });
 
 function createEnv(env: NodeJS.ProcessEnv) {
