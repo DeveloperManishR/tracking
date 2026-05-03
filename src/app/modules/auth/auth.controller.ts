@@ -5,6 +5,7 @@ import { db } from "../../../db/config.js";
 import { userTable } from "../../../db/schema.js";
 import { eq } from "drizzle-orm";
 import jwt from "jsonwebtoken";
+import type { SignOptions } from "jsonwebtoken";
 import { env } from "../../../db/env.js";
 import ApiResponse from "../../common/utils/api-response.js";
 
@@ -54,7 +55,7 @@ const signin = async (req: Request, res: Response) => {
     }
 
     const token = jwt.sign(user, env.TOKEN_SECRET, {
-      expiresIn: "7d",
+      expiresIn: env.TOKEN_EXPIRY as NonNullable<SignOptions["expiresIn"]>,
     });
 
     ApiResponse.ok(res, "SignIn Sucessfull", { user, token });

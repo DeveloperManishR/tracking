@@ -1,13 +1,21 @@
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 import fs from "node:fs";
 import admin from "firebase-admin";
+import { env } from "../../../db/env.js";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const defaultServiceAccountPath = path.resolve(
+  process.cwd(),
+  "src/app/common/firebase/serviceAccountKey.json",
+);
 
-const serviceAccountPath = path.join(__dirname, "./serviceAccountKey.json");
-const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, "utf8"));
+const serviceAccount = env.FIREBASE_SERVICE_ACCOUNT_JSON
+  ? JSON.parse(env.FIREBASE_SERVICE_ACCOUNT_JSON)
+  : JSON.parse(
+      fs.readFileSync(
+        env.FIREBASE_SERVICE_ACCOUNT_PATH ?? defaultServiceAccountPath,
+        "utf8",
+      ),
+    );
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),

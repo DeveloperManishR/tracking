@@ -157,18 +157,20 @@
     <!-- Footer -->
     <footer class="text-center pb-8 text-xs text-gray-300">© 2026 Tracker</footer>
 
+    <script src="/env.js"></script>
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
       import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
 
+      const runtimeEnv = await window.__APP_ENV_PROMISE__;
       const firebaseConfig = {
-        apiKey: "AIzaSyDWX4atpsOcyf3uP1W-kSl2dXUu581X1MY",
-        authDomain: "tracking-fadb1.firebaseapp.com",
-        projectId: "tracking-fadb1",
-        storageBucket: "tracking-fadb1.firebasestorage.app",
-        messagingSenderId: "1085163290634",
-        appId: "1:1085163290634:web:1b14c094819491a7dd1ff3",
-        measurementId: "G-ZPN19HP4V0",
+        apiKey: runtimeEnv.FIREBASE_API_KEY,
+        authDomain: runtimeEnv.FIREBASE_AUTH_DOMAIN,
+        projectId: runtimeEnv.FIREBASE_PROJECT_ID,
+        storageBucket: runtimeEnv.FIREBASE_STORAGE_BUCKET,
+        messagingSenderId: runtimeEnv.FIREBASE_MESSAGING_SENDER_ID,
+        appId: runtimeEnv.FIREBASE_APP_ID,
+        measurementId: runtimeEnv.FIREBASE_MEASUREMENT_ID,
       };
 
       const app = initializeApp(firebaseConfig);
@@ -184,6 +186,7 @@
       const btnText = document.getElementById('btnText');
       const btnSpinner = document.getElementById('btnSpinner');
       const toast = document.getElementById('toast');
+      const apiBaseUrl = runtimeEnv.PUBLIC_API_BASE_URL || window.location.origin;
 
       function showToast(msg) {
         toast.textContent = msg;
@@ -212,7 +215,7 @@
 
       async function callApi(idToken) {
         try {
-          const response = await fetch('http://localhost:9000/api/auth/signin', {
+          const response = await fetch(`${apiBaseUrl}/api/auth/signin`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ idToken }),

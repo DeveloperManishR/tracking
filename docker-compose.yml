@@ -1,17 +1,51 @@
 services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tracking-app
+    ports:
+      - '9000:9000'
+    environment:
+      NODE_ENV: production
+      PORT: '9000'
+      DATABASE_URL: postgresql://test:test@postgres:5432/tracking
+      TOKEN_SECRET: EQFWVD
+      TOKEN_EXPIRY: 7d
+      CLIENT_URL: http://localhost:9000
+      KAFKA_BROKER: kafka:9092
+      KAFKA_CONNECT_RETRIES: '15'
+      KAFKA_CONNECT_RETRY_DELAY_MS: '3000'
+      PUBLIC_API_BASE_URL: http://localhost:9000
+      FIREBASE_API_KEY: AIzaSyDWX4atpsOcyf3uP1W-kSl2dXUu581X1MY
+      FIREBASE_AUTH_DOMAIN: tracking-fadb1.firebaseapp.com
+      FIREBASE_PROJECT_ID: tracking-fadb1
+      FIREBASE_STORAGE_BUCKET: tracking-fadb1.firebasestorage.app
+      FIREBASE_MESSAGING_SENDER_ID: '1085163290634'
+      FIREBASE_APP_ID: 1:1085163290634:web:1b14c094819491a7dd1ff3
+      FIREBASE_MEASUREMENT_ID: G-ZPN19HP4V0
+      FIREBASE_SERVICE_ACCOUNT_PATH: /app/src/app/common/firebase/serviceAccountKey.json
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    restart: unless-stopped
+
   kafka:
     image: apache/kafka:4.2.0
     container_name: kafka
     ports:
-      - '9092:9092'
+      - '29092:29092'
     environment:
       KAFKA_NODE_ID: 1
       KAFKA_PROCESS_ROLES: 'broker,controller'
       KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka:9093'
-      KAFKA_LISTENERS: 'PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093'
-      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://localhost:9092'
+      KAFKA_LISTENERS: 'PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093,PLAINTEXT_HOST://0.0.0.0:29092'
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092'
       KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
@@ -21,12 +55,16 @@ services:
   postgres:
     image: postgres:15
     container_name: postgres
-    ports:
-      - '5432:5432'
     environment:
       POSTGRES_USER: test
       POSTGRES_PASSWORD: test
       POSTGRES_DB: tracking
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U test -d tracking']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
     volumes:
       - pgdata:/var/lib/postgresql/data
 
