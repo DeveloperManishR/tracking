@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign In — Tracker</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+    <style>
+      * { -webkit-font-smoothing: antialiased; }
+      body { font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif; }
+      h1, h2, h3 { font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif; }
+
+      @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(24px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+      @keyframes pulse-ring {
+        0%   { transform: scale(1);   opacity: 0.15; }
+        100% { transform: scale(1.6); opacity: 0; }
+      }
+
+      .fade-up { animation: fadeUp 0.7s cubic-bezier(0.22,1,0.36,1) both; }
+      .fade-up-1 { animation-delay: 0.05s; }
+      .fade-up-2 { animation-delay: 0.15s; }
+      .fade-up-3 { animation-delay: 0.25s; }
+      .fade-up-4 { animation-delay: 0.35s; }
+
+      .pulse-ring {
+        animation: pulse-ring 2s cubic-bezier(0.2,0.6,0.3,1) infinite;
+      }
+
+      .google-btn {
+        position: relative;
+        overflow: hidden;
+        transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+      }
+      .google-btn::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 60%);
+        pointer-events: none;
+      }
+      .google-btn:hover  { transform: translateY(-1px); box-shadow: 0 8px 32px rgba(0,0,0,0.18); }
+      .google-btn:active { transform: translateY(0);    box-shadow: 0 2px 8px  rgba(0,0,0,0.12); }
+
+      .divider { position: relative; }
+      .divider::before, .divider::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        width: calc(50% - 28px);
+        height: 1px;
+        background: #e5e5e5;
+      }
+      .divider::before { left: 0; }
+      .divider::after  { right: 0; }
+
+      #toast {
+        transition: opacity 0.3s, transform 0.3s;
+      }
+      #toast.hidden { opacity: 0; transform: translateY(8px); pointer-events: none; }
+    </style>
+  </head>
+
+  <body class="bg-white min-h-screen flex flex-col">
+
+    <!-- Minimal top bar -->
+    <header class="fade-up fade-up-1 flex items-center justify-between px-8 pt-8 pb-0">
+      <div class="flex items-center gap-2">
+        <div class="relative w-7 h-7">
+          <div class="pulse-ring absolute inset-0 rounded-full bg-black"></div>
+          <div class="absolute inset-0 flex items-center justify-center">
+            <div class="w-2.5 h-2.5 rounded-full bg-black"></div>
+          </div>
+        </div>
+        <span class="text-sm font-medium tracking-widest uppercase text-black">Tracker</span>
+      </div>
+      <span class="text-xs text-gray-400 tracking-wide">v1.0</span>
+    </header>
+
+    <!-- Main -->
+    <main class="flex-1 flex items-center justify-center px-6">
+      <div class="w-full max-w-sm">
+
+        <!-- Heading -->
+        <div class="mb-10">
+          <p class="fade-up fade-up-1 text-xs font-medium tracking-widest uppercase text-gray-400 mb-3">Welcome back</p>
+          <h1 class="fade-up fade-up-2 text-4xl font-semibold text-black leading-tight tracking-tight">
+            Sign in to<br />your account.
+          </h1>
+        </div>
+
+        <!-- Card -->
+        <div class="fade-up fade-up-3 bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+
+          <!-- Google Button -->
+          <button
+            id="googleBtn"
+            class="google-btn w-full flex items-center justify-center gap-3 bg-black text-white text-sm font-medium py-3.5 px-5 rounded-xl"
+          >
+           
+            <span id="btnText">Continue with Google</span>
+            <svg id="btnSpinner" class="hidden w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="white" stroke-width="4"/>
+              <path class="opacity-75" fill="white" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/>
+            </svg>
+          </button>
+
+          <!-- Divider -->
+          <div class="divider my-5 text-center">
+            <span class="relative inline-block bg-white px-3 text-xs text-gray-400 tracking-wide">Secure sign‑in</span>
+          </div>
+
+          <!-- Trust badges -->
+          <div class="flex items-center justify-center gap-6 text-xs text-gray-400">
+            <div class="flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0-1.657-1.343-3-3-3S6 9.343 6 11v5h12v-5c0-1.657-1.343-3-3-3s-3 1.343-3 3z"/>
+                <rect width="12" height="8" x="6" y="14" rx="1" stroke-linecap="round" stroke-width="2"/>
+              </svg>
+              Encrypted
+            </div>
+            <div class="flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+              </svg>
+              Verified
+            </div>
+            <div class="flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064"/>
+              </svg>
+              Private
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer note -->
+        <p class="fade-up fade-up-4 text-center text-xs text-gray-400 mt-5 leading-relaxed">
+          By continuing, you agree to our
+          <a href="#" class="text-black underline underline-offset-2">Terms</a> &
+          <a href="#" class="text-black underline underline-offset-2">Privacy Policy</a>.
+        </p>
+
+      </div>
+    </main>
+
+    <!-- Toast -->
+    <div id="toast" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 bg-red-500 text-white text-sm font-medium px-5 py-3 rounded-xl shadow-lg">
+      Login failed. Please try again.
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center pb-8 text-xs text-gray-300">© 2026 Tracker</footer>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+      import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyDWX4atpsOcyf3uP1W-kSl2dXUu581X1MY",
+        authDomain: "tracking-fadb1.firebaseapp.com",
+        projectId: "tracking-fadb1",
+        storageBucket: "tracking-fadb1.firebasestorage.app",
+        messagingSenderId: "1085163290634",
+        appId: "1:1085163290634:web:1b14c094819491a7dd1ff3",
+        measurementId: "G-ZPN19HP4V0",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const provider = new GoogleAuthProvider();
+
+      // If already logged in, redirect immediately
+      if (localStorage.getItem('token')) {
+        window.location.href = 'index.html';
+      }
+
+      const btn = document.getElementById('googleBtn');
+      const btnText = document.getElementById('btnText');
+      const btnSpinner = document.getElementById('btnSpinner');
+      const toast = document.getElementById('toast');
+
+      function showToast(msg) {
+        toast.textContent = msg;
+        toast.classList.remove('hidden');
+        setTimeout(() => toast.classList.add('hidden'), 3500);
+      }
+
+      function setLoading(on) {
+        btn.disabled = on;
+        btnText.textContent = on ? 'Signing in…' : 'Continue with Google';
+        btnSpinner.classList.toggle('hidden', !on);
+      }
+
+      btn.addEventListener('click', async () => {
+        setLoading(true);
+        try {
+          const result = await signInWithPopup(auth, provider);
+          const idToken = await result.user.getIdToken();
+          await callApi(idToken);
+        } catch (err) {
+          console.error(err);
+          showToast('Login failed. Please try again.');
+          setLoading(false);
+        }
+      });
+
+      async function callApi(idToken) {
+        try {
+          const response = await fetch('http://localhost:9000/api/auth/signin', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idToken }),
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) throw new Error(data.message || 'Server error');
+
+          localStorage.setItem('userDetails', JSON.stringify(data.data.user));
+          localStorage.setItem('token', data.data.token);
+
+          // Redirect to map page
+          window.location.href = 'index.html';
+        } catch (err) {
+          console.error(err);
+          showToast('Authentication failed. Try again.');
+          setLoading(false);
+        }
+      }
+    </script>
+  </body>
+</html>
