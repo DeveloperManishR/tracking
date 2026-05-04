@@ -10,6 +10,7 @@ const envSchema = z.object({
 
   TOKEN_EXPIRY: z.string().min(1),
 
+<<<<<<< HEAD
   CLIENT_URL: z.string().default("http://localhost:9000"),
   KAFKA_BROKER: z.string().default("localhost:29092"),
   KAFKA_CONNECT_RETRIES: z.coerce.number().default(10),
@@ -28,6 +29,10 @@ const publicEnvSchema = z.object({
   FIREBASE_MESSAGING_SENDER_ID: z.string().min(1).default("1085163290634"),
   FIREBASE_APP_ID: z.string().min(1).default("1:1085163290634:web:1b14c094819491a7dd1ff3"),
   FIREBASE_MEASUREMENT_ID: z.string().min(1).default("G-ZPN19HP4V0"),
+=======
+  REDIS_HOST: z.string().min(1),
+  REDIS_PORT: z.coerce.number(), // converts string → number
+>>>>>>> parent of f3b8307 (small change)
 });
 
 function createEnv(env: NodeJS.ProcessEnv) {
